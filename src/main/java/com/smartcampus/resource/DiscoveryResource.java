@@ -8,11 +8,7 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Part 1.2 – Discovery Endpoint
- * GET /api/v1 → returns API metadata including versioning, contact, and resource links (HATEOAS).
- */
-@Path("/")
+@Path("")
 @Produces(MediaType.APPLICATION_JSON)
 public class DiscoveryResource {
 
@@ -27,16 +23,15 @@ public class DiscoveryResource {
                 "email", "admin@smartcampus.ac.uk"
         ));
 
-        // HATEOAS-style resource links — clients can discover endpoints dynamically
         info.put("resources", Map.of(
-                "rooms",    "/api/v1/rooms",
-                "sensors",  "/api/v1/sensors"
+                "rooms", "/api/v1/rooms",
+                "sensors", "/api/v1/sensors"
         ));
 
         info.put("links", Map.of(
-                "self",     "/api/v1",
-                "rooms",    "/api/v1/rooms",
-                "sensors",  "/api/v1/sensors"
+                "self", "/api/v1",
+                "rooms", "/api/v1/rooms",
+                "sensors", "/api/v1/sensors"
         ));
 
         return Response.ok(info).build();

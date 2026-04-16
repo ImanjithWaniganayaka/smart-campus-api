@@ -1,6 +1,6 @@
-D:\IIt\2 year\Client side\smart-campus-api\src\main\java\com\smartcampus\exception\ExceptionMappers.java
 D:\IIt\2 year\Client side\smart-campus-api\src\main\java\com\smartcampus\exception\LinkedResourceNotFoundException.java
 D:\IIt\2 year\Client side\smart-campus-api\src\main\java\com\smartcampus\exception\RoomNotEmptyException.java
+D:\IIt\2 year\Client side\smart-campus-api\src\main\java\com\smartcampus\exception\RoomNotEmptyExceptionMapper.java
 D:\IIt\2 year\Client side\smart-campus-api\src\main\java\com\smartcampus\exception\SensorUnavailableException.java
 D:\IIt\2 year\Client side\smart-campus-api\src\main\java\com\smartcampus\filter\ApiLoggingFilter.java
 D:\IIt\2 year\Client side\smart-campus-api\src\main\java\com\smartcampus\Main.java

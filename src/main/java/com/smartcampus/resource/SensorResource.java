@@ -8,17 +8,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Part 3 – Sensor Operations & Linking
- * Part 4.1 – Sub-Resource Locator Pattern
- *
- * Manages /api/v1/sensors and delegates readings to SensorReadingResource.
- */
 @Path("/sensors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -28,9 +21,6 @@ public class SensorResource {
 
     /**
      * Part 3.2 – GET /api/v1/sensors?type=CO2
-     * Returns all sensors, optionally filtered by ?type= query parameter.
-     * Using @QueryParam rather than a path segment keeps the URL clean for
-     * filtering — path parameters are for identity, query params for filtering.
      */
     @GET
     public Response getSensors(@QueryParam("type") String type) {
@@ -45,8 +35,6 @@ public class SensorResource {
 
     /**
      * Part 3.1 – POST /api/v1/sensors
-     * Registers a new sensor. Validates that the referenced roomId exists.
-     * Throws LinkedResourceNotFoundException (→ 422) if the room is not found.
      */
     @POST
     public Response createSensor(Sensor sensor) {
@@ -60,32 +48,24 @@ public class SensorResource {
                     .entity(Map.of("status", 409, "error", "Conflict", "message", "Sensor with id '" + sensor.getId() + "' already exists."))
                     .build();
         }
-        // Referential integrity check — roomId must exist
         if (sensor.getRoomId() == null || store.getRoom(sensor.getRoomId()) == null) {
             throw new LinkedResourceNotFoundException(
                     "Cannot register sensor: roomId '" + sensor.getRoomId() + "' does not exist in the system."
             );
         }
-        // Default status if not supplied
         if (sensor.getStatus() == null || sensor.getStatus().isBlank()) {
             sensor.setStatus("ACTIVE");
         }
         store.addSensor(sensor);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Sensor registered successfully.");
-        response.put("sensor", sensor);
-        response.put("link", "/api/v1/sensors/" + sensor.getId());
-
         return Response.status(Response.Status.CREATED)
                 .header("Location", "/api/v1/sensors/" + sensor.getId())
-                .entity(response)
+                .entity(sensor)
                 .build();
     }
 
     /**
      * GET /api/v1/sensors/{sensorId}
-     * Returns a single sensor by ID.
      */
     @GET
     @Path("/{sensorId}")
@@ -112,13 +92,6 @@ public class SensorResource {
 
     /**
      * Part 4.1 – Sub-Resource Locator
-     * GET/POST /api/v1/sensors/{sensorId}/readings
-     *
-     * Instead of defining every nested path here (leading to a bloated controller),
-     * this locator delegates to a dedicated SensorReadingResource class. JAX-RS
-     * runtime continues method resolution on the returned instance. This pattern
-     * keeps each class focused on a single responsibility and drastically simplifies
-     * large APIs with deep nesting.
      */
     @Path("/{sensorId}/readings")
     public SensorReadingResource getReadingsResource(@PathParam("sensorId") String sensorId) {

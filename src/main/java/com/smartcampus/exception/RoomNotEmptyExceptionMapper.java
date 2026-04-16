@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * 409 Conflict — Room still has sensors; cannot be deleted.
  */
 @Provider
-class RoomNotEmptyExceptionMapper implements ExceptionMapper<RoomNotEmptyException> {
+public class RoomNotEmptyExceptionMapper implements ExceptionMapper<RoomNotEmptyException> {
     @Override
     public Response toResponse(RoomNotEmptyException ex) {
         Map<String, Object> error = new HashMap<>();

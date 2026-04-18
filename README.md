@@ -147,12 +147,6 @@ The API uses proper HTTP status codes:
 
 ---
 
-## 📹 Demo
-
-👉 Add your video link here
-
----
-
 ## 📚 Coursework Information
 
 - **Module:** 5COSC022W – Client Server Architecture  
@@ -169,20 +163,3 @@ University of Westminster
 
 ---
 
-## 🔥 What you should do now
-
-1. Paste this into `README.md`  
-2. Replace the demo link  
-3. Push to GitHub  
-
----
-
-## 💡 If you want extra marks
-
-I can also:
-
-- Add API diagrams  
-- Improve wording for distinction level  
-- Check your repo against the rubric  
-
-Just tell me 👍

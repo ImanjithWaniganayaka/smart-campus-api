@@ -12,6 +12,7 @@ A RESTful API built with **Java 11, JAX-RS (Jersey 2.x), and an embedded Grizzly
 - [API Endpoints](#api-endpoints)
 - [Sample curl Commands](#sample-curl-commands)
 - [Error Handling](#error-handling)
+- [Video Demo](#video-demo)
 - [Report: Conceptual Questions](#report-conceptual-questions)
 
 ---
@@ -277,13 +278,21 @@ Additionally, the child resource class receives the sensor context (the `sensorI
 
 ### Part 5 — Advanced Error Handling, Exception Mapping & Logging
 
+#### Q5.1: Resource Conflict (409)
+
+When a client attempts to delete a room that still has active sensors assigned to it, the API throws a custom `RoomNotEmptyException`. This is mapped by a dedicated `ExceptionMapper` to an **HTTP 409 Conflict** response with a structured JSON body explaining that the room cannot be decommissioned while hardware remains assigned. This prevents data orphaning — sensors would have no valid room reference if their parent room were deleted — and enforces referential integrity at the application layer without a database.
+
 #### Q5.2: Why HTTP 422 is More Semantically Accurate Than 404 for a Missing roomId Reference
 
 When a client sends a `POST /sensors` request with a `roomId` that does not exist, the request payload itself is syntactically valid JSON and arrives at the server correctly — it is not a missing or malformed request. The issue is a **semantic validation failure**: the referenced entity (`roomId`) does not exist within the system.
 
 HTTP 404 Not Found is semantically reserved for cases where **the resource being requested** — i.e. the URL itself — cannot be found. In this case, the URL (`/sensors`) exists and is correct; the problem is a broken reference inside the request body.
 
-HTTP 422 Unprocessable Entity was designed precisely for this scenario: the server understands the content type and the request is well-formed, but it **cannot be acted upon because of semantic errors** in the data. Returning 422 communicates to the client that the request structure was fine but the referenced `roomId` value is logically invalid, giving developers a much clearer signal about where the problem lies and how to fix it. This leads to better API ergonomics and reduces debugging time.
+HTTP 422 Unprocessable Entity was designed precisely for this scenario: the server understands the content type and the request is well-formed, but it **cannot be acted upon because of semantic errors** in the data. Returning 422 communicates to the client that the request structure was fine but the referenced `roomId` value is logically invalid, giving developers a much clearer signal about where the problem lies and how to fix it.
+
+#### Q5.3: State Constraint (403 Forbidden)
+
+When a sensor is marked with a status of `MAINTENANCE`, it is physically disconnected and cannot accept new readings. Attempting to `POST` a reading to such a sensor throws a `SensorUnavailableException`, which is mapped to an **HTTP 403 Forbidden** response. The 403 status is appropriate here because the request is well-formed and the resource exists — the server simply refuses to fulfil it due to the current state of the resource. This distinguishes the error clearly from a 404 (resource not found) or a 422 (invalid input data).
 
 #### Q5.4: Cybersecurity Risks of Exposing Java Stack Traces
 
@@ -312,13 +321,3 @@ Using JAX-RS filters (implementing `ContainerRequestFilter` and `ContainerRespon
 **Maintainability**: If the logging format needs to change (e.g. adding a correlation ID or timestamp), only the filter class needs updating — not every resource method in the codebase.
 
 This principle extends to other cross-cutting concerns such as authentication, CORS headers, and request validation, all of which are naturally handled by filters in JAX-RS.
-
----
-
-## Coursework Information
-
-- **Module:** 5COSC022W – Client-Server Architectures
-- **Assignment:** Smart Campus REST API (60% of final grade)
-- **Student:** Imanjith Waniganayaka
-- **Institution:** University of Westminster
-  

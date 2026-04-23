@@ -270,4 +270,10 @@ HTTP 422 really fits best because it means that the request has a perfect syntax
 
 By revealing Java stack traces, one discloses excessively to the attackers as the trace can contain information about class names, file directories, used frameworks, and internal logic of the application. This knowledge can help the attacker to discover a weak point and to focus the attack on the part of the system. The main way to prevent this is ensuring that APIs only display generic error messages and keep detailed error reports in internal logs.
 
+---
+**Q10: Why is it advantageous to use JAX-RS filters for cross-cutting concerns like logging, rather than manually inserting Logger.info() statements inside every single resource method?**
+
+One of the benefits of employing JAX-RS filters in the logging process is that they manage the core issues centrally i.e., they eliminate the need to embed logging code on each resource method and hence the code is cleaner, easier to maintain and less prone to errors as developers don't have to copy-paste Logger.info() statements across the API.
+Besides, filters facilitate consistency because not a single request or response gets logged in a dissimilar manner. Moreover, if there are alterations in the logging performance, they can be reflected without touching a single file. The neatest feature of this style of work includes the fact that it is highly reasonable and it does not violate the principles of good design e.g. the separation of concerns.
+
 *University of Westminster – 5COSC022W Client-Server Architectures – 2025/26*
